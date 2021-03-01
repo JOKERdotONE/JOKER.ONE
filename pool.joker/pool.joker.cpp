@@ -20,6 +20,9 @@ public:
         if (from == _self || to != _self || is_gov(from)) {
             return;
         }
+        if (memo == "adminop") {
+            return;
+        }
         if (from != PRE_CONTRACT) {
             transfer("eosio.token"_n, FEE_ACCOUNT, quantity, memo);
             return;
@@ -313,7 +316,13 @@ private:
         round = epoch;
         asset reward = INIT_DAY_REWARDS;
         for (int i = 0; i < epoch; i++) {
-            reward -= (reward / 100) * REDUCE_PERSENT;
+            const asset reward_percent = reward / 100;
+            /* Break out of the loop if additional divisions
+             * have no effect on 'reward' */
+            if ( reward_percent.amount == 0 ) {
+                break;
+            }
+            reward -= reward_percent * REDUCE_PERSENT;
         }
         reward_per_day = reward;
         return;
@@ -386,13 +395,35 @@ private:
     }
 
     void read_order(const string& str, int64_t* res) {
-        int64_t r = 0;
-        for (int i = 0; i < str.size(); i++) {
-            if (str[i] < '0' || str[i] > '9') {
+
+        /* Should only contain numeric characters.
+         * This automatically excludes negative values.
+         */
+        for (const char &c: str) {
+            if (c < '0' || c > '9') {
                 return;
             }
-            r = r*10 + (str[i] - '0');
         }
+
+        // Empty string considered invalid
+        if (str.empty()) {
+            return;
+        }
+
+        char *end;
+        errno = 0;
+        int64_t r = strtoll(str.c_str(), &end, 10);
+
+        /* Conversion failed? */
+        if (*end != '\0') {
+            return;
+        }
+
+        /* Overflow? */
+        if (errno == ERANGE) {
+            return;
+        }
+
         *res = r;
     }
 
