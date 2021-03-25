@@ -7,7 +7,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] prejoker : public contract {
+class [[eosio::contract("stake.joker")]] prejoker : public contract {
 public:
     prejoker(name receiver, name code, datastream<const char*>ds) : contract(receiver, code, ds){}
     [[eosio::on_notify("eosio.token::transfer")]]

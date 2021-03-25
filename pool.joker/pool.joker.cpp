@@ -7,7 +7,7 @@
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract]] joker : public contract {
+class [[eosio::contract("pool.joker")]] joker : public contract {
 public:
     joker(name receiver, name code, datastream<const char*>ds) : contract(receiver, code, ds), state_table(receiver, receiver.value) {
         if (!state_table.exists()) {
