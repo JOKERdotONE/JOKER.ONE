@@ -212,7 +212,7 @@ private:
     const name FEE_ACCOUNT = "fee.joker"_n;
     const symbol REX_SYM{symbol_code("REX"), 4};
     const uint64_t REDUCE_AMOUNT = 520000'0000; // 520,000.0000 JOKER
-    const uint64_t REDUCE_PERSENT = 12; // 12%
+    const uint64_t REDUCE_PERSENT = 88; // 88%
     const name PRE_CONTRACT = "stake.joker"_n;
 
     struct [[eosio::table]] state {
